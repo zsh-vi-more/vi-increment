@@ -5,8 +5,9 @@ Increment and decrement numbers easily with `Ctrl+a` and `Ctrl+x`:
 ## Usage
 
 ```
-$ 200        # 10<C-a>
-$ 210
+$ 200        # 10<C-x>
+$ 190        # 200.
+$ -10
 ```
 ```
 $ 0077       # <C-a>
@@ -17,8 +18,8 @@ $ 0b100011   # 11<C-x>
 $ 0b11000
 ```
 ```
-$ "0x0040"   # 8<C-x>
-$ "0x0038"
+$ (( -0x0040 ))   # 8<C-a>
+$ (( -0x0038 ))
 ```
 
 ## Support
