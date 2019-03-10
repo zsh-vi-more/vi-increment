@@ -2,13 +2,12 @@
 # take numeric prefix to command
 zle -f vichange
 setopt localoptions noksharrays
-local -i op size ans
+local -i d size ans
 local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 chex=0 zero=0
-case ${${1:-$KEYS}[-1]} in
-	x) d=-${NUMERIC:-'1'} ;;
+case ${1} in
+	x) d=0-${NUMERIC:-'1'};;
 	*) d=${NUMERIC:-'1'} ;;
 esac
-
 # forwards
 while (( ++end < $#BUFFER )); do
 	case $BUFFER[end] in
@@ -65,6 +64,5 @@ elif (( chex )); then
 fi
 size=1+end-start
 (( zero )) && local -Z "$size" ans
-# TODO: replace $ans in $BUFFER, update $CURSOR
 BUFFER="$BUFFER[1,start-1]$ans$BUFFER[end+1,$#BUFFER]"
 CURSOR=$(( start - 1 + $#ans ))
