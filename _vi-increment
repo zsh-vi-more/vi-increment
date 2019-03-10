@@ -45,7 +45,10 @@ while
 				(( start -= 2 ))
 			else
 				# may be in a hex number
-				[[ $BUFFER[--start] = [[:xdigit:]xX] ]] && continue
+				if [[ $BUFFER[--start] = [[:xdigit:]xX] ]]; then
+					zero=0 dec=0
+					continue
+				fi
 				dec=1
 				(( start += 2 ))
 			fi
