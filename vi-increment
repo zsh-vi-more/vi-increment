@@ -68,4 +68,5 @@ elif (( chex )); then
 	ans=$(( [#16] BUFFER[start,end] + d ))
 fi
 (( zero )) && local -Z "$size" ans
+# TODO: replace $ans in $BUFFER, update $CURSOR
 echo $ans
