@@ -3,6 +3,7 @@
 zle -f vichange
 setopt localoptions noksharrays extendedglob
 local -i d size ans
+local pans
 # start|end: hex/other number start or end
 # dec(start|end): if a non-decimal digit is found, we don't change these
 # dec: this matches a decimal number
@@ -22,7 +23,10 @@ while (( ++end < $#BUFFER )); do
 		[2-9]) cbin=0 ;&
 		[01_]) (( dec )) && (( decend=end )) ;;
 		[[:xdigit:]]) dec=0 ;;
-		*) break ;;
+		*)
+			(( end-- ))
+			break
+		;;
 	esac
 done
 
@@ -83,8 +87,9 @@ if (( dec )); then
 	end=decend
 	ans=$(( BUFFER[decstart,decend] + d ))
 elif (( cbin )); then
+	# no cbases-0x[hex]-like option, have to manually strip prefix
 	ans=$(( [#2] BUFFER[start,end] + d ))
-	local pans="${ans#'2#'}"
+	pans="${ans#'2#'}"
 	(( start += 2 ))
 elif (( chex )); then
 	setopt localoptions cbases
@@ -95,5 +100,5 @@ if (( zero )); then
 	local -Z "$size" ans
 	! (( chex )) && [[ $(setopt) = *cbases*octalzeroes* ]] && local -i 8 ans
 fi
-BUFFER="$BUFFER[1,start-1]${pans:-$ans}$BUFFER[end+1,$#BUFFER]"
-CURSOR=$(( start - 1 + $#ans ))
+BUFFER="$BUFFER[1,start-1]${pans:=$ans}$BUFFER[end+1,$#BUFFER]"
+CURSOR=$(( start - 2 + ${#pans} ))
