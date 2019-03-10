@@ -17,10 +17,10 @@ $ "0x0038"
 
 - Preserves leading zeroes
 - C-format hex numbers: `0x[hex]`
+- If `setopt OCTAL_ZEROES`: C-format octal numbers
 
 Future support:
 
 - Support `0b[binary]` nubers
-- If `setopt OCTAL_ZEROES`: C-format octal numbers
 - Detect arbitrary zsh-format base `[base]#[num]`
 - Preserve underscores
