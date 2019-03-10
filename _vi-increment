@@ -51,6 +51,10 @@ while
 			fi
 			break
 		;;
+		[[:xdigit:]])
+			zero=0
+			dec=0
+		;;
 		[xX])
 			cbin=0
 			if [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
@@ -63,10 +67,6 @@ while
 				(( start++ ))
 			fi
 			break
-		;;
-		[[:xdigit:]])
-			zero=0
-			dec=0
 		;;
 		*)
 			dec=1
