@@ -36,14 +36,13 @@ while
 					dec=0
 					chex=1
 					(( start-- ))
-					break
 				;;
 				*)
 					dec=1
 					(( start++ ))
-					break
 				;;
 			esac
+			break
 		;;
 		[[:xdigit:]])
 			zero=0
@@ -56,17 +55,16 @@ while
 	esac
 	(( --start ))
 do :; done
-echo $BUFFER[start,end]
-echo $decstart $decend
-echo $BUFFER[decstart,decend]
 if (( dec )); then
-	size=1+decend-decstart
+	start=decstart
+	end=decend
 	ans=$(( BUFFER[decstart,decend] + d ))
 elif (( chex )); then
-	size=1+end-start
 	setopt localoptions cbases
 	ans=$(( [#16] BUFFER[start,end] + d ))
 fi
+size=1+end-start
 (( zero )) && local -Z "$size" ans
 # TODO: replace $ans in $BUFFER, update $CURSOR
-echo $ans
+BUFFER="$BUFFER[1,start-1]$ans$BUFFER[end+1,$#BUFFER]"
+CURSOR=$(( start - 1 + $#ans ))
