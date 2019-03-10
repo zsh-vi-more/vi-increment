@@ -6,9 +6,12 @@ local -i d size ans
 # start|end: hex/other number start or end
 # dec(start|end): if a non-decimal digit is found, we don't change these
 # dec: this matches a decimal number
-# chex: this matches a cbases hex number
+# c(hex|bin): this matches a 0x[hex] or 0b[bin] number
 # zero: this number has leading zeroes to preserve
 local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 cbin=1 chex=0 zero=0
+# We don't detect octal, instead we let zsh (( arithmetic )) gate it:
+# If `setopt octalzerores` and an invalid octal number (like 08), the increment will fail
+
 case ${1} in
 	x) d=0-${NUMERIC:-'1'};;
 	*) d=${NUMERIC:-'1'} ;;
