@@ -1,14 +1,14 @@
 #!/usr/bin/env zsh
 # take numeric prefix to command
 zle -f vichange
-setopt localoptions noksharrays
+setopt localoptions noksharrays extendedglob
 local -i d size ans
 # start|end: hex/other number start or end
 # dec(start|end): if a non-decimal digit is found, we don't change these
 # dec: this matches a decimal number
 # chex: this matches a cbases hex number
 # zero: this number has leading zeroes to preserve
-local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 chex=0 zero=0
+local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 cbin=1 chex=0 zero=0
 case ${1} in
 	x) d=0-${NUMERIC:-'1'};;
 	*) d=${NUMERIC:-'1'} ;;
@@ -16,7 +16,11 @@ esac
 # forwards
 while (( ++end < $#BUFFER )); do
 	case $BUFFER[end] in
-		[[:digit:]_]) (( dec )) && (( decend=end )) ;;
+		[01_]) (( dec )) && (( decend=end )) ;;
+		[[:digit:]])
+			cbin=0
+			(( dec )) && (( decend=end ))
+		;;
 		[[:xdigit:]]) dec=0 ;;
 		*) break ;;
 	esac
@@ -29,23 +33,33 @@ while
 			zero=1
 			(( dec )) && (( decstart=start ))
 		;;
-		[[:digit:]_])
+		[2-9]) cbin=0 ;;
+		[1_])
 			zero=0
 			(( dec )) && (( decstart=start ))
 		;;
+		[bB])
+			if (( cbin )) && [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
+			then
+				dec=0
+				(( start-- ))
+			else
+				dec=1
+				(( start++ ))
+			fi
+			break
+		;;
 		[xX])
-			case $BUFFER[start-2,start-1] in
-				[^[:alnum:]]0) ;&
-				0)
-					dec=0
-					chex=1
-					(( start-- ))
-				;;
-				*)
-					dec=1
-					(( start++ ))
-				;;
-			esac
+			cbin=0
+			if [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
+			then
+				dec=0
+				chex=1
+				(( start-- ))
+			else
+				dec=1
+				(( start++ ))
+			fi
 			break
 		;;
 		[[:xdigit:]])
@@ -63,6 +77,10 @@ if (( dec )); then
 	start=decstart
 	end=decend
 	ans=$(( BUFFER[decstart,decend] + d ))
+elif (( cbin )); then
+	ans=$(( [#2] BUFFER[start,end] + d ))
+	local pans="${ans#'2#'}"
+	(( start += 2 ))
 elif (( chex )); then
 	setopt localoptions cbases
 	ans=$(( [#16] BUFFER[start,end] + d ))
@@ -70,7 +88,7 @@ fi
 size=1+end-start
 if (( zero )); then
 	local -Z "$size" ans
-	[[ $(setopt) = *cbases*octalzeroes* ]] && local -i 8 ans
+	! (( chex )) && [[ $(setopt) = *cbases*octalzeroes* ]] && local -i 8 ans
 fi
-BUFFER="$BUFFER[1,start-1]$ans$BUFFER[end+1,$#BUFFER]"
+BUFFER="$BUFFER[1,start-1]${pans:-$ans}$BUFFER[end+1,$#BUFFER]"
 CURSOR=$(( start - 1 + $#ans ))
