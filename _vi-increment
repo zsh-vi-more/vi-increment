@@ -19,11 +19,8 @@ esac
 # forwards
 while (( ++end < $#BUFFER )); do
 	case $BUFFER[end] in
+		[2-9]) cbin=0 ;&
 		[01_]) (( dec )) && (( decend=end )) ;;
-		[[:digit:]])
-			cbin=0
-			(( dec )) && (( decend=end ))
-		;;
 		[[:xdigit:]]) dec=0 ;;
 		*) break ;;
 	esac
@@ -36,7 +33,7 @@ while
 			zero=1
 			(( dec )) && (( decstart=start ))
 		;;
-		[2-9]) cbin=0 ;;
+		[2-9]) cbin=0 ;&
 		[1_])
 			zero=0
 			(( dec )) && (( decstart=start ))
