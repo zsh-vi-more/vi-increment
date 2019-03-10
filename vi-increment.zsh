@@ -7,7 +7,7 @@ fpath+="${0:h}"
 autoload -Uz _vi-increment
 zle -N vi-increment
 zle -N vi-decrement
-for m in vicmd viopp; do
+for m in vicmd visual; do
 	bindkey -M "$m" '^a' vi-increment
 	bindkey -M "$m" '^x' vi-decrement
 done
