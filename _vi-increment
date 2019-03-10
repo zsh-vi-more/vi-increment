@@ -57,7 +57,7 @@ while
 			then
 				dec=0
 				chex=1
-				(( start-- ))
+				(( start -= 2 ))
 			else
 				dec=1
 				(( start++ ))
@@ -75,6 +75,8 @@ while
 	esac
 	(( --start ))
 do :; done
+# Detect negatives afterwards: makes alternate bases easier
+[[ "$BUFFER[start]" = '-' ]] || (( start++ ))
 if (( dec )); then
 	start=decstart
 	end=decend
