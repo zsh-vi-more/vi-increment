@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # take numeric prefix to command
-#zle -f vichange
+zle -f vichange
 setopt localoptions noksharrays
 local -i op size ans
 local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 chex=0 zero=0
