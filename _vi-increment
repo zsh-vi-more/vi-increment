@@ -68,6 +68,9 @@ elif (( chex )); then
 	ans=$(( [#16] BUFFER[start,end] + d ))
 fi
 size=1+end-start
-(( zero )) && local -Z "$size" ans
+if (( zero )); then
+	local -Z "$size" ans
+	[[ $(setopt) = *cbases*octalzeroes* ]] && local -i 8 ans
+fi
 BUFFER="$BUFFER[1,start-1]$ans$BUFFER[end+1,$#BUFFER]"
 CURSOR=$(( start - 1 + $#ans ))
