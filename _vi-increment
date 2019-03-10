@@ -45,10 +45,12 @@ while
 			if (( cbin )) && [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
 			then
 				dec=0
-				(( start-- ))
+				(( start -= 2 ))
 			else
+				# may be in a hex number
+				[[ $BUFFER[--start] = [[:xdigit:]xX] ]] && continue
 				dec=1
-				(( start++ ))
+				(( start += 2 ))
 			fi
 			break
 		;;
