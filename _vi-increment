@@ -55,15 +55,13 @@ while
 			break
 		;;
 		[[:xdigit:]])
-			zero=0
-			dec=0
+			zero=0 dec=0
 		;;
 		[xX])
 			cbin=0
 			if [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
 			then
-				dec=0
-				chex=1
+				dec=0 chex=1
 				(( start -= 2 ))
 			else
 				dec=1
