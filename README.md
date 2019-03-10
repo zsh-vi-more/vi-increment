@@ -5,15 +5,15 @@ Increment and decrement numbers easily with `Ctrl+a` and `Ctrl+x`:
 ## Usage
 
 ```
-$ 200    # 10<C-a>
+$ 200        # 10<C-a>
 $ 210
 ```
 ```
-$ 0077    #<C-a>
+$ 0077       # <C-a>
 $ 0100
 ```
 ```
-$ 0b100011 #11<C-x>
+$ 0b100011   # 11<C-x>
 $ 0b11000
 ```
 ```
