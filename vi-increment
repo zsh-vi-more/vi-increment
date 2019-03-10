@@ -1,0 +1,71 @@
+#!/usr/bin/env zsh
+# take numeric prefix to command
+#zle -f vichange
+setopt localoptions noksharrays
+local -i op size ans
+local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 chex=0 zero=0
+case ${${1:-$KEYS}[-1]} in
+	x) d=-${NUMERIC:-'1'} ;;
+	*) d=${NUMERIC:-'1'} ;;
+esac
+
+# forwards
+while (( ++end < $#BUFFER )); do
+	case $BUFFER[end] in
+		[[:digit:]_]) (( dec )) && (( decend=end )) ;;
+		[[:xdigit:]]) dec=0 ;;
+		*) break ;;
+	esac
+done
+
+# backwards
+while
+	case $BUFFER[start] in
+		0)
+			zero=1
+			(( dec )) && (( decstart=start ))
+		;;
+		[[:digit:]_])
+			zero=0
+			(( dec )) && (( decstart=start ))
+		;;
+		[xX])
+			case $BUFFER[start-2,start-1] in
+				[^[:alnum:]]0) ;&
+				0)
+					dec=0
+					chex=1
+					(( start-- ))
+					break
+				;;
+				*)
+					dec=1
+					(( start++ ))
+					break
+				;;
+			esac
+		;;
+		[[:xdigit:]])
+			zero=0
+			dec=0
+		;;
+		*)
+			dec=1
+			break
+		;;
+	esac
+	(( --start ))
+do :; done
+echo $BUFFER[start,end]
+echo $decstart $decend
+echo $BUFFER[decstart,decend]
+if (( dec )); then
+	size=1+decend-decstart
+	ans=$(( BUFFER[decstart,decend] + d ))
+elif (( chex )); then
+	size=1+end-start
+	setopt localoptions cbases
+	ans=$(( [#16] BUFFER[start,end] + d ))
+fi
+(( zero )) && local -Z "$size" ans
+echo $ans
