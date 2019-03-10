@@ -3,6 +3,11 @@
 zle -f vichange
 setopt localoptions noksharrays
 local -i d size ans
+# start|end: hex/other number start or end
+# dec(start|end): if a non-decimal digit is found, we don't change these
+# dec: this matches a decimal number
+# chex: this matches a cbases hex number
+# zero: this number has leading zeroes to preserve
 local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 chex=0 zero=0
 case ${1} in
 	x) d=0-${NUMERIC:-'1'};;
