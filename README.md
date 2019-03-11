@@ -24,11 +24,11 @@ $ (( -0x0038 ))
 
 ## Support
 
-- Operates on a visual-mode selection
+- Operates in both `visual` and `vicmd` modes
 - Preserves leading zeroes
-- C-format hex numbers: `0x[hex]`
-- Support `0b[binary]` nubers
-- If `setopt OCTAL_ZEROES`: C-format octal numbers `0[oct]`
+- C-formats hex numbers: `0x[hex]`
+- Supports `0b[binary]` nubers
+- If `setopt OCTAL_ZEROES`: C-formats octal numbers `0[oct]`
 
 Future support:
 
