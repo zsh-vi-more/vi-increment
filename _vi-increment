@@ -20,7 +20,21 @@ esac
 
 # visual mode
 if (( REGION_ACTIVE )); then
-
+	cbin=0 chex=0 odec=0 zero=0
+	if (( MARK > CURSOR )); then
+		end=1+MARK start=1+CURSOR
+	else
+		end=1+CURSOR start=1+MARK
+	fi
+	odec_start=$start odec_end=$end
+	case $BUFFER[start,end] in
+		-#0[bB]0*) zero=1 ;&
+		-#0[bB]* ) cbin=1 ;;
+		-#0[xX]0*) zero=1 ;&
+		-#0[xX]* ) chex=1 ;;
+		-#0*) zero=1 ;&
+		* ) odec=1  ;;
+	esac
 else
 	# forwards
 	while (( end++ < $#BUFFER )); do
@@ -108,3 +122,4 @@ if (( zero )); then
 fi
 BUFFER="$BUFFER[1,start-1]${pans:=$ans}$BUFFER[end+1,$#BUFFER]"
 CURSOR=$(( start - 2 + ${#pans} ))
+MARK=$(( start - 1 ))
