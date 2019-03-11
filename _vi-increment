@@ -9,7 +9,7 @@ local pans
 # odec: this matches a octal|decimal number
 # c(hex|bin): this matches a 0x[hex] or 0b[bin] number
 # zero: this number has leading zeroes to preserve
-local -i start=CURSOR end=CURSOR+1 odec_start=CURSOR odec_end=CURSOR+1 odec=1 cbin=1 chex=0 zero=0
+local -i start=CURSOR+1 end=CURSOR odec_start=CURSOR odec_end=CURSOR+1 odec=1 cbin=1 chex=0 zero=0
 # We don't detect octal, instead we let zsh (( arithmetic )) gate it:
 # If `setopt octalzerores` and an invalid octal number (like 08), the increment will fail
 
@@ -37,7 +37,7 @@ if (( REGION_ACTIVE )); then
 	esac
 else
 	# forwards
-	while (( end++ < $#BUFFER )); do
+	while (( ++end < $#BUFFER )); do
 		case $BUFFER[end] in
 		[2-9]) cbin=0 ;&
 		[01_]) (( odec )) && (( odec_end=end )) ;;
@@ -101,6 +101,8 @@ else
 	do :; done
 	# Detect negatives afterwards: makes alternate bases easier
 	[[ "$BUFFER[start]" = '-' ]] || (( start++ ))
+	# Invalid range: exit
+	(( start > end )) && return
 fi
 if (( odec )); then
 	start=odec_start
