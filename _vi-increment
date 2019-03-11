@@ -5,11 +5,11 @@ setopt localoptions noksharrays extendedglob
 local -i d size ans
 local pans
 # start|end: hex/other number start or end
-# dec(start|end): if a non-decimal digit is found, we don't change these
-# dec: this matches a decimal number
+# odec(start|end): if a non-octal|decimal digit is found, we don't change these
+# odec: this matches a octal|decimal number
 # c(hex|bin): this matches a 0x[hex] or 0b[bin] number
 # zero: this number has leading zeroes to preserve
-local -i start=CURSOR end=CURSOR+1 decstart=CURSOR decend=CURSOR+1 dec=1 cbin=1 chex=0 zero=0
+local -i start=CURSOR end=CURSOR+1 odec_start=CURSOR odec_end=CURSOR+1 odec=1 cbin=1 chex=0 zero=0
 # We don't detect octal, instead we let zsh (( arithmetic )) gate it:
 # If `setopt octalzerores` and an invalid octal number (like 08), the increment will fail
 
@@ -23,11 +23,11 @@ if (( REGION_ACTIVE )); then
 
 else
 	# forwards
-	while (( ++end < $#BUFFER )); do
+	while (( end++ < $#BUFFER )); do
 		case $BUFFER[end] in
 		[2-9]) cbin=0 ;&
-		[01_]) (( dec )) && (( decend=end )) ;;
-		[[:xdigit:]]) dec=0 ;;
+		[01_]) (( odec )) && (( odec_end=end )) ;;
+		[[:xdigit:]]) odec=0 ;;
 		*)
 			(( end-- ))
 			break
@@ -40,46 +40,46 @@ else
 		case $BUFFER[start] in
 		0)
 			zero=1
-			(( dec )) && (( decstart=start ))
+			(( odec )) && (( odec_start=start ))
 			;;
 		[2-9]) cbin=0 ;&
 		[1_])
 			zero=0
-			(( dec )) && (( decstart=start ))
+			(( odec )) && (( odec_start=start ))
 			;;
 		[bB])
 			if (( cbin )) && [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
 			then
-				dec=0
+				odec=0
 				(( start -= 2 ))
 			else
 				# may be in a hex number
 				if [[ $BUFFER[--start] = [[:xdigit:]xX] ]]; then
-					zero=0 dec=0
+					zero=0 odec=0
 					continue
 				fi
-				dec=1
+				odec=1
 				(( start += 2 ))
 			fi
 			break
 			;;
 		[[:xdigit:]])
-			zero=0 dec=0
+			zero=0 odec=0
 			;;
 		[xX])
 			cbin=0
 			if [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
 			then
-				dec=0 chex=1
+				odec=0 chex=1
 				(( start -= 2 ))
 			else
-				dec=1
+				odec=1
 				(( start++ ))
 			fi
 			break
 			;;
 		*)
-			dec=1
+			odec=1
 			break
 			;;
 		esac
@@ -88,10 +88,10 @@ else
 	# Detect negatives afterwards: makes alternate bases easier
 	[[ "$BUFFER[start]" = '-' ]] || (( start++ ))
 fi
-if (( dec )); then
-	start=decstart
-	end=decend
-	ans=$(( BUFFER[decstart,decend] + d ))
+if (( odec )); then
+	start=odec_start
+	end=odec_end
+	ans=$(( BUFFER[odec_start,odec_end] + d ))
 elif (( cbin )); then
 	# no cbases-0x[hex]-like option, have to manually strip prefix
 	ans=$(( [#2] BUFFER[start,end] + d ))
