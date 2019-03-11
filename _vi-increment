@@ -2,14 +2,15 @@
 # take numeric prefix to command
 zle -f vichange
 setopt localoptions noksharrays extendedglob
-local -i d size ans
-local pans
-# start|end: hex/other number start or end
-# odec(start|end): if a non-octal|decimal digit is found, we don't change these
-# odec: this matches a octal|decimal number
-# c(hex|bin): this matches a 0x[hex] or 0b[bin] number
-# zero: this number has leading zeroes to preserve
-local -i start=CURSOR+1 end=CURSOR odec_start=CURSOR odec_end=CURSOR+1 odec=1 cbin=1 chex=0 zero=0
+# start|end:        hex/other number start or end
+# odec_(start|end): the start or end of the longest matching [[:digit:]] string
+# odec:             this matches a octal|decimal number
+# c(hex|bin):       this matches a 0x[hex] or 0b[bin] number
+# zero:             this number has leading zeroes to preserve
+# d:                the numeric change requested
+# (s)ans:           the answer, in numeric or (s)tring format
+local sans
+local -i d ans start end odec_start odec_end odec cbin chex zero
 # We don't detect octal, instead we let zsh (( arithmetic )) gate it:
 # If `setopt octalzerores` and an invalid octal number (like 08), the increment will fail
 
@@ -36,6 +37,10 @@ if (( REGION_ACTIVE )); then
 		* ) odec=1  ;;
 	esac
 else
+	# not visual, must parse BUFFER
+	odec=1 cbin=1 chex=0 zero=0
+	start=CURSOR+1 end=CURSOR
+	odec_start=start odec_end=end
 	# forwards
 	while (( ++end < $#BUFFER )); do
 		case $BUFFER[end] in
@@ -115,17 +120,16 @@ if (( odec )); then
 elif (( cbin )); then
 	# no cbases-0x[hex]-like option, have to manually strip prefix
 	ans=$(( [#2] BUFFER[start,end] + d ))
-	pans="${ans#'2#'}"
+	sans="${ans#'2#'}"
 	(( start += 2 ))
 elif (( chex )); then
 	setopt localoptions cbases
 	ans=$(( [#16] BUFFER[start,end] + d ))
 fi
-size=1+end-start
 if (( zero )); then
-	local -Z "$size" ans
+	local -Z $((1 + end - start )) ans
 	! (( chex )) && [[ $(setopt) = *cbases*octalzeroes* ]] && local -i 8 ans
 fi
-BUFFER="$BUFFER[1,start-1]${pans:=$ans}$BUFFER[end+1,$#BUFFER]"
-CURSOR=$(( start - 2 + ${#pans} ))
+BUFFER="$BUFFER[1,start-1]${sans:=$ans}$BUFFER[end+1,$#BUFFER]"
+CURSOR=$(( start - 2 + ${#sans} ))
 MARK=$(( start - 1 ))
