@@ -17,31 +17,36 @@ case ${1} in
 	x) d=0-${NUMERIC:-'1'};;
 	*) d=${NUMERIC:-'1'} ;;
 esac
-# forwards
-while (( ++end < $#BUFFER )); do
-	case $BUFFER[end] in
+
+# visual mode
+if (( REGION_ACTIVE )); then
+
+else
+	# forwards
+	while (( ++end < $#BUFFER )); do
+		case $BUFFER[end] in
 		[2-9]) cbin=0 ;&
 		[01_]) (( dec )) && (( decend=end )) ;;
 		[[:xdigit:]]) dec=0 ;;
 		*)
 			(( end-- ))
 			break
-		;;
-	esac
-done
+			;;
+		esac
+	done
 
-# backwards
-while
-	case $BUFFER[start] in
+	# backwards
+	while
+		case $BUFFER[start] in
 		0)
 			zero=1
 			(( dec )) && (( decstart=start ))
-		;;
+			;;
 		[2-9]) cbin=0 ;&
 		[1_])
 			zero=0
 			(( dec )) && (( decstart=start ))
-		;;
+			;;
 		[bB])
 			if (( cbin )) && [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
 			then
@@ -57,10 +62,10 @@ while
 				(( start += 2 ))
 			fi
 			break
-		;;
+			;;
 		[[:xdigit:]])
 			zero=0 dec=0
-		;;
+			;;
 		[xX])
 			cbin=0
 			if [[ $BUFFER[start-2,start-1] = [^[:alnum:]]#0 ]]
@@ -72,16 +77,17 @@ while
 				(( start++ ))
 			fi
 			break
-		;;
+			;;
 		*)
 			dec=1
 			break
-		;;
-	esac
-	(( --start ))
-do :; done
-# Detect negatives afterwards: makes alternate bases easier
-[[ "$BUFFER[start]" = '-' ]] || (( start++ ))
+			;;
+		esac
+		(( --start ))
+	do :; done
+	# Detect negatives afterwards: makes alternate bases easier
+	[[ "$BUFFER[start]" = '-' ]] || (( start++ ))
+fi
 if (( dec )); then
 	start=decstart
 	end=decend
