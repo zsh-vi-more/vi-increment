@@ -5,16 +5,16 @@ Increment and decrement numbers easily with `Ctrl+a` and `Ctrl+x`:
 ## Usage
 
 ```
-$ 200        # 10<C-x>
-$ 190        # 200.
+$ 200             # 10<C-x>
+$ 190             # 200.
 $ -10
 ```
 ```
-$ 0077       # <C-a> (with setopt octalzeroes)
+$ 0077            # <C-a> (with setopt octalzeroes)
 $ 0100
 ```
 ```
-$ 0b100011   # 11<C-x>
+$ 0b100011        # 11<C-x>
 $ 0b11000
 ```
 ```
