@@ -10,7 +10,8 @@ and the dot command can be used:
 ```zsh
 $ 200             # 10<C-x>
 $ 190             # 200.
-$ -10
+$ -10             # .
+$ -210
 ```
 
 With `setopt octalzeroes`, Vi-increment will let Zsh-native arithmetic
