@@ -26,14 +26,15 @@ $ (( -0x0038 ))
 
 - Operates in both `visual` and `vicmd` modes
 - Preserves leading zeroes
-- C-formats hex numbers: `0x[hex]`
-- Supports `0b[binary]` nubers
-- If `setopt OCTAL_ZEROES`: C-formats octal numbers `0[oct]`
+- Preserves C-formatted hexadecimal numbers: `0x[hex]`
+- Preserves C-formatted binary numbers: `0b[binary]`
+- If `setopt OCTAL_ZEROES`: Preserves C-formatted octal numbers `0[oct]`
 
 Future support:
 
 - Detect arbitrary zsh-format base `[base]#[num]`
 - Preserve underscores
+
 ## Installation
 
 **Antigen**:
