@@ -4,35 +4,48 @@ Increment and decrement numbers easily with `Ctrl+a` and `Ctrl+x`:
 
 ## Usage
 
-```
+Vi-increment registers itself as a Vi change, so numeric prefixes
+and the dot command can be used:
+
+```zsh
 $ 200             # 10<C-x>
 $ 190             # 200.
 $ -10
 ```
-```
-$ 0077            # <C-a> (with setopt octalzeroes)
+
+With `setopt octalzeroes`, Vi-increment will let Zsh-native arithmetic
+detect octal numbers and preserve them:
+
+```zsh
+$ 0077            # <C-a>
 $ 0100
 ```
-```
+
+Binary numbers are also detected and preserved:
+
+```zsh
 $ 0b100011        # 11<C-x>
 $ 0b11000
 ```
-```
+
+Vi-increment will also preserve leading zeroes, and fully supports negative numbers:
+
+```zsh
 $ (( -0x0040 ))   # 8<C-a>
 $ (( -0x0038 ))
 ```
 
-## Support
+## Features
 
 - Operates in both `visual` and `vicmd` modes
 - Preserves leading zeroes
 - Preserves C-formatted hexadecimal numbers: `0x[hex]`
 - Preserves C-formatted binary numbers: `0b[binary]`
-- If `setopt OCTAL_ZEROES`: Preserves C-formatted octal numbers `0[oct]`
+- If `setopt OCTAL_ZEROES`: Preserves C-formatted octal numbers: `0[oct]`
 
-Future support:
+Future features:
 
-- Detect arbitrary zsh-format base `[base]#[num]`
+- Detect and preserve arbitrary zsh-format base `[base]#[num]`
 - Preserve underscores
 
 ## Installation
