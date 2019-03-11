@@ -34,3 +34,37 @@ Future support:
 
 - Detect arbitrary zsh-format base `[base]#[num]`
 - Preserve underscores
+## Installation
+
+**Antigen**:
+```zsh
+antigen bundle zsh-vi-more/vi-increments
+antigen apply
+```
+
+**Zgen**:
+```zsh
+zgen load zsh-vi-more/vi-increment
+zgen save
+```
+
+
+**Zplug**:
+```zsh
+zplug zsh-vi-more/vi-increment
+```
+
+**Zplugin**:
+```zsh
+zplugin ice wait "0"
+zplugin light zsh-vi-more/vi-increment
+
+# Optionally, track the latest development version:
+zplugin ice wait "0" ver"dev"
+zplugin light zsh-vi-more/vi-increment
+```
+
+**Manually**: Clone the project, and then source it:
+```zsh
+source /path/to/vi-increment/vi-increment.zsh
+```
