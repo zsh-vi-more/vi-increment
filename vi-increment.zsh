@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 
-vi-increment(){ _vi-increment a }
-vi-decrement(){ _vi-increment x }
+.vi-increment(){ .vi-increment_ a }
+.vi-decrement(){ .vi-increment_ x }
 
 fpath+="${0:h}"
-autoload -Uz _vi-increment
+autoload -Uz .vi-increment_
 zle -N vi-increment
 zle -N vi-decrement
 for m in vicmd visual; do
