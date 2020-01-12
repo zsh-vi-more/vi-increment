@@ -42,7 +42,7 @@ else
 	start=CURSOR+1 end=CURSOR
 	odec_start=start odec_end=end
 	# forwards
-	while (( ++end < $#BUFFER )); do
+	while (( ++end <= $#BUFFER )); do
 		case $BUFFER[end] in
 		[2-9]) cbin=0 ;&
 		[01_]) (( odec )) && (( odec_end=end )) ;;
