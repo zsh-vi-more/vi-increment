@@ -13,8 +13,8 @@ fi
 .vi-decrement(){ .vi-increment_ x }
 
 autoload -Uz .vi-increment_
-zle -N vi-increment
-zle -N vi-decrement
+zle -N vi-increment .vi-increment
+zle -N vi-decrement .vi-decrement
 for m in vicmd visual; do
 	bindkey -M "$m" '^a' vi-increment
 	bindkey -M "$m" '^x' vi-decrement
