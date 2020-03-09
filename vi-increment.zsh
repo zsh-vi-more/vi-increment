@@ -9,12 +9,9 @@ then
 fi
 # }}}
 
-.vi-increment(){ .vi-increment_ a }
-.vi-decrement(){ .vi-increment_ x }
-
-autoload -Uz .vi-increment_
+autoload -Uz .vi-increment
 zle -N vi-increment .vi-increment
-zle -N vi-decrement .vi-decrement
+zle -N vi-decrement .vi-increment
 for m in vicmd visual; do
 	bindkey -M "$m" '^a' vi-increment
 	bindkey -M "$m" '^x' vi-decrement

@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 # take numeric prefix to command
 zle -f vichange
-setopt localoptions noksharrays extendedglob
+emulate -L zsh
+setopt extendedglob
 # start|end:        hex/other number start or end
 # odec_(start|end): the start or end of the longest matching [[:digit:]] string
 # odec:             this matches a octal|decimal number
@@ -14,8 +15,8 @@ local -i d ans start end odec_start odec_end odec cbin chex zero
 # We don't detect octal, instead we let zsh (( arithmetic )) gate it:
 # If `setopt octalzerores` and an invalid octal number (like 08), the increment will fail
 
-case ${1} in
-	x) d=0-${NUMERIC:-'1'};;
+case ${WIDGET} in
+	vi-dec*) d=0-${NUMERIC:-'1'} ;;
 	*) d=${NUMERIC:-'1'} ;;
 esac
 
