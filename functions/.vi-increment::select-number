@@ -44,7 +44,7 @@ local k v line=$BUFFER[lstart,lend]
 	# Is this after the last bin/hex number?
 	if ((p[ostart] > p[end])); then
 		p[base]=''
-		((p[start] = p[ostart], p[end] = ${${line[p[start],-1]}[(i)[^[:digit:]_]]} - 1 ))
+		((p[start] = p[ostart], p[end] = p[start] + ${${line:$p[ostart]}[(i)[^[:digit:]_]]} - 1))
 		if [[ $line[p[start]] = 0 ]]; then
 			p[zero]=1
 		fi

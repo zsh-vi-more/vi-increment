@@ -1,8 +1,7 @@
 #!/usr/bin/env zsh
 # take numeric prefix to command
 zle -f vichange
-emulate -L zsh
-setopt extendedglob
+setopt localoptions noksharrays extendedglob
 # start|end:        hex/other number start or end
 # odec_(start|end): the start or end of the longest matching [[:digit:]] string
 # base:             the value determines what type of number is matched
@@ -44,7 +43,7 @@ else
 	end=$reply[4]
 fi
 case $base in
-cbin0) # no cbases-0x[hex]-like option, have to manually strip prefix
+cbin) # no cbases-0x[hex]-like option, have to manually strip prefix
 	ans=$(( [#2] BUFFER[start,end] + d ))
 	sans="${ans#'2#'}"
 	(( start += 2 ))
@@ -58,8 +57,9 @@ chex)
 esac
 if (( zero )); then
 	local -Z $((1 + end - start )) ans
-	if [[ $base != chex && $options[cbases] = on && $options[octalzeroes] = on ]]; then
+	if [[ -z $base && $options[cbases] = on && $options[octalzeroes] = on ]]; then
 		local -i 8 ans
+		[[ $ans[1] = 0 ]] || sans=0$ans
 	fi
 fi
 BUFFER="$BUFFER[1,start-1]${sans:=$ans}$BUFFER[end+1,$#BUFFER]"
