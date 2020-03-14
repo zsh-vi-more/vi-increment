@@ -52,7 +52,7 @@ local k v line=$BUFFER[lstart,lend]
 	unset 'p[ostart]'
 
 	# Is the cursor in the last instance?
-	if ((end >= lcursor)); then
+	if ((p[start] && p[end] >= lcursor)); then
 		for k v ("${(@kv)p}"); do
 			: ${(P)k::=$v}
 		done
@@ -67,11 +67,13 @@ local k v line=$BUFFER[lstart,lend]
 			0x0)
 				n[zero]=1 ;&
 			0x[[:xdigit:]])
-				((n[chex]=1, n[end] = n[start] + ${${line[n[start]+2,-1]}[(i)[^[:xdigit:]]]})) ;;
+				n[base]=chex
+				((n[end] = n[start] + ${${line[n[start]+2,-1]}[(i)[^[:xdigit:]]]})) ;;
 			0b0)
 				n[zero]=1 ;&
 			0b1)
-				((n[cbin]=1, n[end] = n[start] + ${${line[n[start]+2,-1]}[(i)[^01]]})) ;;
+				n[base]=cbin
+				((n[end] = n[start] + ${${line[n[start]+2,-1]}[(i)[^01]]})) ;;
 		esac
 	fi
 
@@ -86,6 +88,7 @@ local k v line=$BUFFER[lstart,lend]
 		base=''
 	elif [[ -v 'n[end]' ]]; then
 		# use hex/bin
+		unset 'n[ostart]'
 		for k v ("${(@kv)n}"); do
 			: ${(P)k::=$v}
 		done
