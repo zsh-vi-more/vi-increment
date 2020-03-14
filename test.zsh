@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 fpath+=("${0:h}/functions")
-autoload .vi-select-number
+autoload .vi-increment::select-number
 
 # test selection
 for LBUFFER RBUFFER (
