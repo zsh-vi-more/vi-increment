@@ -14,6 +14,7 @@ for LBUFFER RBUFFER (
 	'nothing' '   1'
 	'' 'nothing 0xf'
 	'::0123 before' 'nothing'
+	'10 + 0xff +' ''
 ); {
 	BUFFER=$LBUFFER$RBUFFER
 	CURSOR=$#LBUFFER

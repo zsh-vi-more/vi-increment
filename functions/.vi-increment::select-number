@@ -38,7 +38,7 @@ local k v line=$BUFFER[lstart,lend]
 	# and before/at cursor
 	if ((p[ostart] = ${${line[p[end]+1,lcursor]}[(I)[^[:digit:]][[:digit:]]]})); then
 		((p[ostart] = p[end] + 1 + p[ostart]))
-	elif [[ $line[1] = [[:digit:]] ]]; then
+	elif [[ $line[p[ostart]] = [[:digit:]] ]]; then
 		((p[ostart] = p[end] + 1))
 	fi
 	# Is this after the last bin/hex number?
