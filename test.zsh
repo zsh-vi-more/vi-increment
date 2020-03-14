@@ -12,12 +12,19 @@ for LBUFFER RBUFFER (
 	'Test in cursor 0' 'xff'
 	'1    ' 'nothing'
 	'nothing' '   1'
+	'' 'nothing 0xf'
 ); {
 	BUFFER=$LBUFFER$RBUFFER
 	CURSOR=$#LBUFFER
 	local -i start=0 end=0 zero=0
 	local base=
-	.vi-select-number g
-	print "$zero:${base:-dec}::$BUFFER[start,end]:"
+	local -a reply
+	.vi-increment::select-number
+	! (($#reply)) && return 1
+	base=$reply[1]
+	zero=$reply[2]
+	start=$reply[3]
+	end=$reply[4]
+	printf '%1d: %4s [%3d,%3d]: %s\n' $zero ${base:-dec} $start $end $BUFFER[start,end]
 }
 

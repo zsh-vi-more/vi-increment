@@ -103,7 +103,7 @@ local k v line=$BUFFER[lstart,lend]
 	fi
 } always {
 	(($?)) && return $?
-	reply=($base $zero $((lstart + start)) $((lstart + end)))
+	reply=("$base" $zero $((lstart + start)) $((lstart + end)))
 }
 
 # vim: set syntax=zsh :
