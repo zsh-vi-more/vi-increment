@@ -1,10 +1,9 @@
 # ensure we are only working with the current line
 emulate -L zsh
 setopt extendedglob
-if ! [[ $1 = g* ]]; then
-	local base
-	local -i start end zero
-fi
+
+local base
+local -i start end zero
 local -i lstart=$LBUFFER[(I)$'\n'] lend=CURSOR+$RBUFFER[(i)$'\n'] lcursor=CURSOR-line_start
 local -A p n
 local k v line=$BUFFER[lstart,lend]
@@ -96,12 +95,12 @@ local k v line=$BUFFER[lstart,lend]
 			: ${(P)k::=$v}
 		done
 	else
+		[[ $1 = *d* ]] && set +x
 		return 1
 	fi
 } always {
 	(($?)) && return $?
-	start+=lstart
-	end+=lstart
+	reply=($base $zero $((lstart + start)) $((lstart + end)))
 }
 
 # vim: set syntax=zsh :

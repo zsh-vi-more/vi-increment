@@ -35,7 +35,13 @@ if (( REGION_ACTIVE )); then
 		-#0*) zero=1
 	esac
 else
-	.vi-select-number
+	local -a reply
+	.vi-increment::select-number
+	! (($#reply)) && return 1
+	base=$reply[1]
+	zero=$reply[2]
+	start=$reply[3]
+	end=$reply[4]
 fi
 case $base in
 cbin0) # no cbases-0x[hex]-like option, have to manually strip prefix
