@@ -1,0 +1,107 @@
+# ensure we are only working with the current line
+emulate -L zsh
+setopt extendedglob
+if ! [[ $1 = g* ]]; then
+	local base
+	local -i start end zero
+fi
+local -i lstart=$LBUFFER[(I)$'\n'] lend=CURSOR+$RBUFFER[(i)$'\n'] lcursor=CURSOR-line_start
+local -A p n
+local k v line=$BUFFER[lstart,lend]
+{
+	# Find last bin / hex instance starting before/at cursor
+	
+	if ((p[start] = ${${line[1,lcursor+2]}[(I)(0[bB][01]|0[xX][[:xdigit:]])]})); then
+		# found!
+		case $line[p[start],p[start]+2] in
+			0x0)
+				p[zero]=1 ;&
+			0x[[:xdigit:]])
+				p[base]=chex
+				((p[end] = p[start] + ${${line[p[start]+2,-1]}[(i)[^[:xdigit:]_]]})) ;;
+			0b0)
+				p[zero]=1 ;&
+			0b1)
+				p[base]=chex
+				((p[end] = p[start] + ${${line[p[start]+2,-1]}[(i)[^01_]]})) ;;
+		esac
+
+		# Is the cursor in the last instance?
+		if ((p[end] >= lcursor)); then
+			for k v (${(kv)p}); do
+				: ${(P)k::=$v}
+			done
+			return
+		fi
+	fi
+
+	# Find last oct/dec instance starting after last bin/hex
+	# and before/at cursor
+	if ((p[ostart] = ${${line[p[end]+1,lcursor]}[(I)[^[:digit:]][[:digit:]]]})); then
+		((p[ostart] = p[end] + 1 + p[ostart]))
+	elif [[ $line[1] = [[:digit:]] ]]; then
+		((p[ostart] = p[end] + 1))
+	fi
+	# Is this after the last bin/hex number?
+	if ((p[ostart] > p[end])); then
+		p[base]=''
+		((p[start] = p[ostart], p[end] = ${${line[p[start],-1]}[(i)[^[:digit:]_]]} - 1 ))
+		if [[ $line[p[start]] = 0 ]]; then
+			p[zero]=1
+		fi
+	fi
+	unset 'p[ostart]'
+
+	# Is the cursor in the last instance?
+	if ((end >= lcursor)); then
+		for k v ("${(@kv)p}"); do
+			: ${(P)k::=$v}
+		done
+		return
+	fi
+
+	# Find next hex/bin instance starting after cursor
+	((n[start] = lcursor + ${${line[lcursor+1,-1]}[(i)(0[bB][01]|0[xX][[:xdigit:]])]}))
+	if ((n[start] < $#line)); then
+		# found!
+		case $line[n[start],n[start]+2] in
+			0x0)
+				n[zero]=1 ;&
+			0x[[:xdigit:]])
+				((n[chex]=1, n[end] = n[start] + ${${line[n[start]+2,-1]}[(i)[^[:xdigit:]]]})) ;;
+			0b0)
+				n[zero]=1 ;&
+			0b1)
+				((n[cbin]=1, n[end] = n[start] + ${${line[n[start]+2,-1]}[(i)[^01]]})) ;;
+		esac
+	fi
+
+	# Find next oct/dec instance starting after cursor
+	((n[ostart] = lcursor + ${${line[lcursor+1,-1]}[(i)[[:digit:]]]}))
+	if ((n[ostart] < n[start])); then
+		# found, and closer than hex/bin number
+		if [[ $line[n[ostart]] = 0 ]]; then
+			zero=1
+		fi
+		((start = n[ostart], end = n[ostart] - 2 + ${${line[n[ostart],-1]}[(i)[^[:digit:]]]}))
+		base=''
+	elif [[ -v 'n[end]' ]]; then
+		# use hex/bin
+		for k v ("${(@kv)n}"); do
+			: ${(P)k::=$v}
+		done
+	elif [[ -v 'p[end]' ]] then
+		# use previous number
+		for k v ("${(@kv)p}"); do
+			: ${(P)k::=$v}
+		done
+	else
+		return 1
+	fi
+} always {
+	(($?)) && return $?
+	start+=lstart
+	end+=lstart
+}
+
+# vim: set syntax=zsh :
