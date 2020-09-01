@@ -12,6 +12,7 @@ fi
 autoload -Uz .vi-increment{,::select-number}
 zle -N vi-increment .vi-increment
 zle -N vi-decrement .vi-increment
+local m
 for m in vicmd visual; do
 	bindkey -M "$m" '^a' vi-increment
 	bindkey -M "$m" '^x' vi-decrement
