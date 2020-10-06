@@ -108,9 +108,11 @@ local k v line=$BUFFER[lstart,lend]
 	((zero = zero & (end != start + ($#base ? 2 : 0))))
 
 	# Negative?
-	[[ ${line[start - 1]} = '-' ]] && {
-		((start--))
-	}
+	[[ ${line[start - 1]} = '-' ]] && ((start--))
+
+	# end >= start
+	((end = end > start ? end : start))
+
 	reply=("$base" "$zero" "$((lstart + start))" "$((lstart + end))")
 }
 
