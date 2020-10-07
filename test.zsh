@@ -16,6 +16,7 @@ for LBUFFER RBUFFER (
 	'::0123 before' 'nothing'
 	'10 + 0xff +' ''
 	'0' ''
+	'-1' ''
 ); {
 	BUFFER=$LBUFFER$RBUFFER
 	CURSOR=$#LBUFFER
@@ -28,6 +29,6 @@ for LBUFFER RBUFFER (
 	zero=$reply[2]
 	start=$reply[3]
 	end=$reply[4]
-	printf '%1d: %4s [%3d,%3d]: %s|\n' $zero ${base:-dec} $start $end $BUFFER[start,end]
+	printf '%1d: %4s [%3d,%3d]:[%s]\n' $zero ${base:-dec} $start $end $BUFFER[start,end]
 }
 
