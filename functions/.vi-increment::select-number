@@ -40,6 +40,8 @@ local k v line=$BUFFER[lstart,lend]
 		((p[ostart] = p[end] + 1 + p[ostart]))
 	elif [[ $line[p[ostart]] = [[:digit:]] ]]; then
 		((p[ostart] = p[end] + 1))
+	elif [[ $line[1] = [[:digit:]] ]]; then
+		((p[ostart] = 1))
 	fi
 	# Is this after the last bin/hex number?
 	if ((p[ostart] > p[end])); then
@@ -98,11 +100,14 @@ local k v line=$BUFFER[lstart,lend]
 			: ${(P)k::=$v}
 		done
 	else
-		[[ $1 = *d* ]] && set +x
+		[[ $1 = *d* ]]
 		return 1
 	fi
 } always {
 	(($?)) && return $?
+
+	# end >= start
+	((end = end > start ? end : start))
 
 	# If N == 0, don't treat this as a 0-prefixed number
 	((zero = zero & (end != start + ($#base ? 2 : 0))))
@@ -110,8 +115,6 @@ local k v line=$BUFFER[lstart,lend]
 	# Negative?
 	[[ ${line[start - 1]} = '-' ]] && ((start--))
 
-	# end >= start
-	((end = end > start ? end : start))
 
 	reply=("$base" "$zero" "$((lstart + start))" "$((lstart + end))")
 }

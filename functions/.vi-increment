@@ -34,7 +34,7 @@ if (( REGION_ACTIVE )); then
 		-#0*) zero=1
 	esac
 else
-	local -a reply
+	local -a reply=()
 	.vi-increment::select-number
 	! (($#reply)) && return 1
 	base=$reply[1]
