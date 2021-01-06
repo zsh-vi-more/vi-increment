@@ -1,5 +1,7 @@
 # Vi-Increment
 
+[![Gitter](https://badges.gitter.im/zsh-vi-more/community.svg)](https://gitter.im/zsh-vi-more/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 Increment and decrement numbers easily with `Ctrl+a` and `Ctrl+x`:
 
 ## Usage
