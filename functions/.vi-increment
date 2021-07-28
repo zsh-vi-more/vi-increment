@@ -43,9 +43,8 @@ else
 	end=$reply[4]
 fi
 case $base in
-cbin) # no cbases-0x[hex]-like option, have to manually strip prefix
-	ans=$(( [#2] BUFFER[start,end] + d ))
-	sans="${ans#'2#'}"
+cbin) # [##2] prevents "2#" prefix from being inserted
+	ans=$(( [##2] BUFFER[start,end] + d ))
 	(( start += 2 ))
 	;;
 chex)
